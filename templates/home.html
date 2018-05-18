@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+        
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <link rel="stylesheet" href="{{url_for('static', filename='ChemDoodleWeb-8.0.0/ChemDoodleWeb.css')}}" type="text/css">
+        <script type="text/javascript" src="{{url_for('static', filename='ChemDoodleWeb-8.0.0/ChemDoodleWeb.js')}}"></script>
+        <link rel="stylesheet" href="{{url_for('static', filename='ChemDoodleWeb-8.0.0/uis/jquery-ui-1.11.4.css')}}" type="text/css">
+        <script type="text/javascript" src="{{url_for('static', filename='ChemDoodleWeb-8.0.0/uis/ChemDoodleWeb-uis.js')}}"></script>
+        
+        <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" type="text/css">
+        
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" type="text/css">
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <form id="form-typing" class="row align-items-center">
+                <div class="form-group col-sm-4 offset-sm-4 align-self-center text-center">
+                    Enter Smiles or PubChem CID: 
+                    <input id="input-structure" class="form-control" type="text"/>
+                </div>
+                <div class="form-group col-sm-12 align-items-center text-center">
+                    <div class="row justify-content-center">
+                        <div id="ff-div" class="col-sm-4">
+                            Forcefield: 
+                            <select id="forcefield" class="form-control">
+                                <option>Dreiding</option>
+                                <option>Generalized Amber Force Field (GAFF)</option>
+                                <option>Polymer Consistent Force Field (PCFF)</option>
+                            </select>
+                        </div>
+                        <div id="typer-div" class="col-sm-4" style="display:none;">
+                            Type with:
+                            <select id="typer" class="form-control">
+                                <option>pysimm</option>
+                                <option>antechamber</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group-inline col-sm-4 offset-sm-4 align-self-center text-center">
+                    <input class="btn btn-dark" type="submit" value="Submit"/>
+                    <button id="download" type="button" class="btn btn-light" aria-label="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </form>
+            <div class="row align-items-center">
+                <div class="col-sm align-self-center text-center">
+                    <div id="loader-canvas" class="loader"></div>
+                    <canvas id="editor3d"/>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-sm align-self-center text-center">
+                    <div id="loader-table" class="loader"></div>
+                    <table id="table-atoms">
+                        <thead>
+                            <tr>
+                                <th>Tag</th>
+                                <th>Element</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="{{url_for('static', filename='js/viewer3d.js')}}"></script>
+    </body>
+</html>

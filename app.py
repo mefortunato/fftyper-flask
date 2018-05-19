@@ -1,3 +1,6 @@
+import os
+import shutil
+import tempfile
 from flask import Flask, render_template, request, jsonify
 from pysimm import system, forcefield, amber
 
@@ -25,14 +28,28 @@ def get_types():
         if typer == 'pysimm':
             s.apply_forcefield(f)
         elif typer == 'antechamber':
+            cwd = os.getcwd()
+            tempdir = tempfile.mkdtemp()
+            print(tempdir)
+            os.chdir(tempdir)
             amber.get_forcefield_types(s, f=f)
+            os.chdir(cwd)
+            shutil.rmtree(tempdir)
+    p_elems = set(p.elem for p in s.particles)
+    possible_types = {e: [] for e in p_elems}
+    possible_types_desc = {e: [] for e in p_elems}
+    for pt in f.particle_types:
+        if pt.elem in p_elems:
+            possible_types[pt.elem].append(pt.name)
+            possible_types_desc[pt.elem].append(pt.desc)
     
-    return jsonify(types=[p.type.name for p in s.particles], desc=[p.type.desc for p in s.particles])
+    return jsonify(types=[p.type.name for p in s.particles], desc=[p.type.desc for p in s.particles], possible_types=possible_types, possible_types_desc=possible_types_desc)
 
 @app.route('/get-lmps/', methods=['POST'])
 def get_lmps():
     molfile = request.form['mol']
-    type_names = request.form.getlist('typeNames[]')
+    type_names = map(lambda x: x.split()[-1], request.form.getlist('typeNames[]'))
+    print(type_names)
     ff = request.form['ff']
     if ff == 'Dreiding':
         f = forcefield.Dreiding()

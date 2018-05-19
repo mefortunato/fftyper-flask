@@ -75,6 +75,29 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="typeModal" tabindex="-1" role="dialog" aria-labelledby="typeModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Edit Particle Type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Possible types:
+                <select id="possible-types" class="form-control">
+                </select>
+                <div>
+                    Description: <span id="type-desc"></span>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <script type="text/javascript" src="{{url_for('static', filename='js/viewer3d.js')}}"></script>
     </body>
 </html>

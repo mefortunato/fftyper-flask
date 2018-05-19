@@ -15,6 +15,9 @@ var currentMolfile;
 var currentMolecule;
 var viewer;
 var table;
+var possibleTypes;
+var possibleTypesDesc;
+var currentEdit;
 
 $( document ).ready(function() {
     $('#loader-canvas').hide();
@@ -47,6 +50,38 @@ $( document ).ready(function() {
         else {
             $('#typer-div').hide();
         }
+    });
+    
+    $('#possible-types').change(function(event) {
+        var typeName = $('#possible-types').val();
+        for (e in possibleTypes) {
+            for (i in possibleTypes[e]) {
+                if (possibleTypes[e][i] == typeName) {
+                    $('#type-desc').text(possibleTypesDesc[e][i]);
+                }
+            }
+        }
+    })
+    
+    $('#table-atoms tbody').on( 'click', 'tr td:nth-child(3)', function (){
+        var tableData = table.row(this).data();
+        currentEdit = tableData[0]-1;
+        var elem = tableData[1];
+        var tableData2 = tableData[2].split(" ");
+        var typeName = tableData2[tableData2.length-1];
+        $('#possible-types').empty();
+        for (i in possibleTypes[elem]) {
+            $('#possible-types').append('<option>'+possibleTypes[elem][i]+'</option>')
+            if (typeName == possibleTypes[elem][i]) {
+                $('#type-desc').text(possibleTypesDesc[elem][i])
+            }
+        }
+        $('#possible-types').val(typeName);
+    });
+    
+    $('#typeModal').on('hide.bs.modal', function(e) {
+        table.cell(currentEdit, 2).data('<i class="fas fa-pencil-alt" data-toggle="modal" data-target="#typeModal"></i> '+$('#possible-types').val()).draw();
+        table.cell(currentEdit, 3).data($('#type-desc').text()).draw();
     })
     
     
@@ -69,10 +104,12 @@ $( document ).ready(function() {
             viewer.repaint();
             $('#loader-table').show();
             $.post('/get-types/', {'mol': molfile, 'ff': ff, 'typer': typer}, function(respData) {
+                possibleTypesDesc = respData["possible_types_desc"];
+                possibleTypes = respData["possible_types"];
                 var labels = mol.atoms.map(a => a.label);
                 var data = new Array();
                 for (i=1;i<=labels.length;i++) {
-                    data.push(new Array(i, labels[i-1], respData['types'][i-1], respData['desc'][i-1]))
+                    data.push(new Array(i, labels[i-1], '<i class="fas fa-pencil-alt" data-toggle="modal" data-target="#typeModal"></i> '+respData['types'][i-1], respData['desc'][i-1]))
                 }
                 var table = $('#table-atoms').DataTable();
                 table.data().clear();

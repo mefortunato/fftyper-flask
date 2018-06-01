@@ -11,6 +11,7 @@ function download(filename, text) {
   document.body.removeChild(element);
 }
 
+var currentCid;
 var currentMolfile;
 var currentMolecule;
 var viewer;
@@ -98,6 +99,7 @@ $( document ).ready(function() {
         $('#loader-canvas').show();
         var resp = jQuery.get(url, function(molfile) {
             currentMolfile = molfile;
+            currentCid = molfile.split('\n').shift()
             var mol = new ChemDoodle.io.MOLInterpreter().read(molfile, 1);
             currentMolecule = mol;
             viewer.loadMolecule(mol);
@@ -108,15 +110,24 @@ $( document ).ready(function() {
                 possibleTypes = respData["possible_types"];
                 var labels = mol.atoms.map(a => a.label);
                 var data = new Array();
-                for (i=1;i<=labels.length;i++) {
-                    data.push(new Array(i, labels[i-1], '<i class="fas fa-pencil-alt" data-toggle="modal" data-target="#typeModal"></i> '+respData['types'][i-1], respData['desc'][i-1]))
+                console.log(respData)
+                if (respData['types'].length > 0) {
+                    for (i=1;i<=labels.length;i++) {
+                        data.push(new Array(i, labels[i-1], '<i class="fas fa-pencil-alt" data-toggle="modal" data-target="#typeModal"></i> '+respData['types'][i-1], respData['desc'][i-1]))
+                    }
+                }
+                else {
+                    alert('Error: Automatic typing failed. Please assign types manually')
+                    for (i=1;i<=labels.length;i++) {
+                        data.push(new Array(i, labels[i-1], '<i class="fas fa-pencil-alt" data-toggle="modal" data-target="#typeModal"></i> ', ''))
+                    }
                 }
                 var table = $('#table-atoms').DataTable();
                 table.data().clear();
                 table.rows.add(data);
                 table.draw()
             }).fail(function() {
-                alert( "Error: Typing with pysimm failed." );
+                alert( "Error: Communication with pysimm api failed." );
                 var table = $('#table-atoms').DataTable();
                 table.data().clear();
                 table.draw();
@@ -139,8 +150,23 @@ $( document ).ready(function() {
     $('#download').click(function() {
         var typeNames = $('#table-atoms').DataTable().columns().data()[2];
         var ff = $('#forcefield').val();
+        var ffstr = '';
+        if (ff == 'Dreiding') {
+            ffstr = 'dreiding';
+        }
+        else if (ff == 'Polymer Consistent Force Field (PCFF)') {
+            ffstr = 'pcff';
+        }
+        else if (ff == 'Generalized Amber Force Field (GAFF)') {
+            ffstr = 'gaff';
+        }
         $.post('/get-lmps/', {'mol': currentMolfile, 'typeNames': typeNames, 'ff': ff}, function(respData) {
-            download('data.lmps', respData['lmpsData'])
+            if (respData['lmpsData'] == null) {
+                alert('Error: typing with supplied atom types failed')
+            }
+            else {
+                download(currentCid+'-'+ffstr+'.lmps', respData['lmpsData'])
+            }
         });
     })
     

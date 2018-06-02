@@ -69,3 +69,6 @@ def get_lmps():
         p.type = types[pname]
     s.apply_forcefield(f, skip_ptypes=True)
     return jsonify(lmpsData=s.write_lammps('string'))
+
+if __name__ == '__main__':
+    app.run()

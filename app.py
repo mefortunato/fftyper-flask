@@ -68,6 +68,7 @@ def get_lmps():
     for p, pname in zip(s.particles, type_names):
         p.type = types[pname]
     s.apply_forcefield(f, skip_ptypes=True)
+    s.pair_style = f.pair_style
     return jsonify(lmpsData=s.write_lammps('string'))
 
 if __name__ == '__main__':
